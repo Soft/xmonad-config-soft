@@ -3,19 +3,25 @@ module XMonad.Config.Soft.Bindings
 
 import qualified Data.Map as M
 
-import XMonad (XConfig, KeyMask, KeySym, X, sendMessage)
+import XMonad (XConfig(..), (.|.), X, Query, sendMessage)
 import XMonad.Actions.CycleWS (toggleWS)
 import XMonad.Actions.FindEmptyWorkspace (viewEmptyWorkspace, tagToEmptyWorkspace)
+import XMonad.Actions.WindowGo (raiseMaybe)
 import XMonad.Layout.Groups.Helpers (swapMaster)
 import XMonad.Layout.BinarySpacePartition (ResizeDirectional(..), Direction2D(..), Rotate(..), Swap(..))
 import XMonad.Util.EZConfig (mkKeymap)
+import XMonad.Util.Run (safeSpawn)
 import XMonad.Prompt (XPConfig)
+import XMonad.ManageHook ((=?), className)
+
+import Graphics.X11.Types
 
 import XMonad.Config.Soft.Actions
 import XMonad.Config.Soft.Prompt
 
+
 keyMap :: XPConfig -> XConfig a -> M.Map (KeyMask, KeySym) (X ())
-keyMap xpc = flip mkKeymap
+keyMap xpc xc = mkKeymap xc
   [ ("M-0", viewEmptyWorkspace)
   , ("M-S-0", tagToEmptyWorkspace)
   , ("M-<Backspace>", toggleWS)
@@ -30,5 +36,21 @@ keyMap xpc = flip mkKeymap
   , ("C-M-k", sendMessage $ MoveSplit U)
   , ("M-r", sendMessage Rotate)
   , ("M-s", sendMessage Swap) ]
+  `M.union` launchersToMap xc launchers
+
+launchersToMap :: XConfig a -> [(KeySym, String, [String], Query Bool)] -> M.Map (KeyMask, KeySym) (X ())
+launchersToMap c = M.fromList . map create
+  where
+    create (k, b, a, p) = ((mod .|. shiftMask, k), raiseMaybe (safeSpawn b a) p)
+    mod = modMask c
+
+-- Maybe I'll make these more configurable one day
+launchers =
+  [ (xK_b, "firefox", [],                 className =? "Firefox")
+  , (xK_d, "emacsclient", ["-c", "-n"],   className =? "Emacs")
+  , (xK_f, "zathura", [],                 className =? "Zathura")
+  , (xK_o, "ario", [],                    className =? "Ario")
+  , (xK_r, "transmission-remote-gtk", [], className =? "Transmission-remote-gtk")
+  , (xK_p, "pcmanfm", [],                 className =? "Pcmanfm")]
 
 
