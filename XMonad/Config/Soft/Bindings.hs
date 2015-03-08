@@ -11,7 +11,7 @@ import XMonad.Layout.Groups.Helpers (swapMaster)
 import XMonad.Layout.BinarySpacePartition (ResizeDirectional(..), Direction2D(..), Rotate(..), Swap(..))
 import XMonad.Util.EZConfig (mkKeymap)
 import XMonad.Util.Run (safeSpawn)
-import XMonad.ManageHook ((=?), className)
+import XMonad.ManageHook ((=?), className, title)
 
 import Graphics.X11.Types
 
@@ -46,11 +46,13 @@ launchersToMap c = M.fromList . map create
 -- Maybe I'll make these more configurable one day
 launchers :: [(KeySym, String, [String], Query Bool)]
 launchers =
-  [ (xK_b, "firefox", [],                 className =? "Firefox")
-  , (xK_d, "emacsclient", ["-c", "-n"],   className =? "Emacs")
-  , (xK_f, "zathura", [],                 className =? "Zathura")
-  , (xK_o, "ario", [],                    className =? "Ario")
-  , (xK_r, "transmission-remote-gtk", [], className =? "Transmission-remote-gtk")
-  , (xK_p, "pcmanfm", [],                 className =? "Pcmanfm")]
+  [ (xK_b, "firefox", [],                     className =? "Firefox")
+  , (xK_d, "emacsclient", ["-c", "-n"],       className =? "Emacs")
+  , (xK_f, "zathura", [],                     className =? "Zathura")
+  , (xK_o, "ario", [],                        className =? "Ario")
+  , (xK_r, "transmission-remote-gtk", [],     className =? "Transmission-remote-gtk")
+  , (xK_p, "pcmanfm", [],                     className =? "Pcmanfm")
+  , (xK_t, "lxtask", [],                      className =? "Lxtask")
+  , (xK_a, "urxvt", ["-e", "tmux", "attach"], title =? "tmux")]
 
 
