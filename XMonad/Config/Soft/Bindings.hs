@@ -11,7 +11,6 @@ import XMonad.Layout.Groups.Helpers (swapMaster)
 import XMonad.Layout.BinarySpacePartition (ResizeDirectional(..), Direction2D(..), Rotate(..), Swap(..))
 import XMonad.Util.EZConfig (mkKeymap)
 import XMonad.Util.Run (safeSpawn)
-import XMonad.Prompt (XPConfig)
 import XMonad.ManageHook ((=?), className)
 
 import Graphics.X11.Types
@@ -20,13 +19,13 @@ import XMonad.Config.Soft.Actions
 import XMonad.Config.Soft.Prompt
 
 
-keyMap :: XPConfig -> XConfig a -> M.Map (KeyMask, KeySym) (X ())
-keyMap xpc xc = mkKeymap xc
+keyMap :: XConfig a -> M.Map (KeyMask, KeySym) (X ())
+keyMap xc = mkKeymap xc
   [ ("M-0", viewEmptyWorkspace)
   , ("M-S-0", tagToEmptyWorkspace)
   , ("M-<Backspace>", toggleWS)
   , ("M-S-m", swapMaster)
-  , ("M-x", internalPrompt xpc)
+  , ("M-x", rofi internalPrompt)
   , ("M-c", runCompact)
 
   -- Keybindings for BinarySpacePartition
@@ -45,6 +44,7 @@ launchersToMap c = M.fromList . map create
     mod = modMask c
 
 -- Maybe I'll make these more configurable one day
+launchers :: [(KeySym, String, [String], Query Bool)]
 launchers =
   [ (xK_b, "firefox", [],                 className =? "Firefox")
   , (xK_d, "emacsclient", ["-c", "-n"],   className =? "Emacs")

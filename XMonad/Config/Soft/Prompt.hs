@@ -1,12 +1,14 @@
 module XMonad.Config.Soft.Prompt
-  (internalPrompt)
+  (Prompter(..), pipePrompt, rofi, internalPrompt)
   where
 
 import Data.Default (def)
+import Data.List (intercalate)
 
 import XMonad (X)
 import XMonad.Prompt (XPConfig(..))
-import XMonad.Prompt.XMonad (xmonadPrompt)
+import XMonad.Actions.Commands (defaultCommands, runCommand')
+import XMonad.Util.Run (runProcessWithInput)
 
 import XMonad.Config.Soft.Resources
 
@@ -29,12 +31,18 @@ instance IsXRSettings XPConfig where
     where
       get = setting m
 
-internalPrompt :: XPConfig -> X ()
-internalPrompt = xmonadPrompt
+data Prompter = Prompter
+  { completions :: X [String]
+  , execute :: String -> X () }
 
--- data Prompter = Prompter
---   { completions :: X [String]
---   , execute :: String -> X () }
+pipePrompt :: FilePath -> [String] -> Prompter -> X ()
+pipePrompt bin args p = do
+  alts <- completions p
+  choice <- runProcessWithInput bin args (intercalate "\n" alts)
+  execute p (init choice)
 
--- externalPrompt :: FilePath -> Prompter
--- externalPrompt = undefined
+rofi :: Prompter -> X ()
+rofi = pipePrompt "rofi" ["-dmenu"]
+
+internalPrompt :: Prompter
+internalPrompt = Prompter (fmap (fmap fst) defaultCommands) runCommand'
