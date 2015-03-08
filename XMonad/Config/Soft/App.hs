@@ -30,7 +30,7 @@ config res pipe = do
   focused <- setting res "focusedBorderColor"
   floats <- setting res "floating"
   theme <- fromXRSettings res
-  prompt <- fromXRSettings res
+  -- prompt <- fromXRSettings res
   let conf = def { terminal = term
                  , normalBorderColor = normal
                  , focusedBorderColor = focused
@@ -43,7 +43,7 @@ config res pipe = do
                  , logHook = logger pipe}
   return
     $ ewmh
-    $ additionalKeys conf (M.assocs $ keyMap prompt conf)
+    $ additionalKeys conf (M.assocs $ keyMap conf)
 
 main :: IO ()
 main = do
