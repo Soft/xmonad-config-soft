@@ -1,8 +1,19 @@
 module XMonad.Config.Soft.Actions
-  (runCompact, compact) where
+  (runCompact, centerWindow, compact) where
 
-import XMonad (X)
+import XMonad (X, Window, ManageHook, runQuery)
+import XMonad.Operations (windows)
 import XMonad.StackSet (StackSet)
+import XMonad.Hooks.ManageHelpers (doCenterFloat)
+
+import Control.Monad ((>=>))
+import Data.Monoid (appEndo)
+
+action :: ManageHook -> Window -> X ()
+action h = runQuery h >=> windows . appEndo
+
+centerWindow :: Window -> X ()
+centerWindow = action doCenterFloat
 
 -- TODO: Implement
 runCompact :: X ()

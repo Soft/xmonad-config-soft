@@ -12,6 +12,7 @@ import XMonad.Layout.BinarySpacePartition (ResizeDirectional(..), Direction2D(..
 import XMonad.Util.EZConfig (mkKeymap)
 import XMonad.Util.Run (safeSpawn)
 import XMonad.ManageHook ((=?), className, title)
+import XMonad.Operations (withFocused)
 
 import Graphics.X11.Types
 
@@ -26,7 +27,7 @@ keyMap xc = mkKeymap xc
   , ("M-<Backspace>", toggleWS)
   , ("M-S-m", swapMaster)
   , ("M-x", rofi internalPrompt)
-  , ("M-c", runCompact)
+  , ("M-c", withFocused centerWindow)
 
   -- Keybindings for BinarySpacePartition
   , ("C-M-l", sendMessage $ MoveSplit R)
@@ -49,7 +50,7 @@ launchers =
   [ (xK_b, "firefox", [],                     className =? "Firefox")
   , (xK_d, "emacsclient", ["-c", "-n"],       className =? "Emacs")
   , (xK_f, "zathura", [],                     className =? "Zathura")
-  , (xK_o, "ario", [],                        className =? "Ario")
+  , (xK_o, "spotify", [],                     className =? "Spotify")
   , (xK_r, "transmission-remote-gtk", [],     className =? "Transmission-remote-gtk")
   , (xK_p, "pcmanfm", [],                     className =? "Pcmanfm")
   , (xK_t, "lxtask", [],                      className =? "Lxtask")
