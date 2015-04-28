@@ -4,7 +4,7 @@ module XMonad.Config.Soft.Bindings
 import qualified Data.Map as M
 
 import XMonad (XConfig(..), (.|.), X, Query, sendMessage)
-import XMonad.Actions.CycleWS (toggleWS)
+import XMonad.Actions.CycleWS (toggleWS, swapNextScreen)
 import XMonad.Actions.FindEmptyWorkspace (viewEmptyWorkspace, tagToEmptyWorkspace)
 import XMonad.Actions.WindowGo (raiseMaybe)
 import XMonad.Layout.Groups.Helpers (swapMaster)
@@ -26,6 +26,7 @@ keyMap xc = mkKeymap xc
   , ("M-S-0", tagToEmptyWorkspace)
   , ("M-<Backspace>", toggleWS)
   , ("M-S-m", swapMaster)
+  , ("M-S-.", swapNextScreen)
   , ("M-x", rofi internalPrompt)
   , ("M-c", withFocused centerWindow)
 
