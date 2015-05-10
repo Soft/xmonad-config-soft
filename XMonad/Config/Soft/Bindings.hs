@@ -16,6 +16,7 @@ import XMonad.Operations (withFocused)
 
 import Graphics.X11.Types
 
+import XMonad.Config.Soft.Layouts
 import XMonad.Config.Soft.Actions
 import XMonad.Config.Soft.Prompt
 
@@ -29,6 +30,8 @@ keyMap xc = mkKeymap xc
   , ("M-S-.", swapNextScreen)
   , ("M-x", rofi internalPrompt)
   , ("M-c", withFocused centerWindow)
+
+  , ("M-t", sendMessage ToggleSpacing)
 
   -- Keybindings for BinarySpacePartition
   , ("C-M-l", sendMessage $ MoveSplit R)

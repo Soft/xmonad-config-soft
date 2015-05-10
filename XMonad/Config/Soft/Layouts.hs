@@ -1,10 +1,11 @@
-{-# LANGUAGE MultiParamTypeClasses, FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses, FlexibleInstances, DeriveDataTypeable #-}
 module XMonad.Config.Soft.Layouts where
 
 import Data.Default (def)
+import Data.Typeable (Typeable)
 import Graphics.X11 (Rectangle(..))
 
-import XMonad (Full(..), runLayout, (|||))
+import XMonad (Full(..), runLayout, (|||), Message, fromMessage)
 import XMonad.Hooks.ManageDocks (avoidStruts)
 import XMonad.Layout.BinarySpacePartition (emptyBSP)
 import XMonad.Layout.Decoration (Theme(..), Decoration, DefaultShrinker)
@@ -58,10 +59,16 @@ instance IsXRSettings Theme where
 -- This is mostly borrowed from https://github.com/egasimus/xmonad-equalspacing/blob/master/EqualSpacing.hs
 -- Removed the automatic scaling and added 'smart' behaviour
 
-spacing g = ModifiedLayout (Spacing g)
+data SpacingMsg = ToggleSpacing
+                deriving (Typeable)
 
-newtype Spacing a = Spacing
+instance Message SpacingMsg
+
+spacing g = ModifiedLayout (Spacing g True)
+
+data Spacing a = Spacing
   { gap :: Int
+  , enabled :: Bool
   } deriving (Show, Read)
 
 instance LayoutModifier Spacing a where
@@ -70,11 +77,16 @@ instance LayoutModifier Spacing a where
   pureModifier _ _ _ [x] = ([x], Nothing)
   pureModifier m _ _ windows = (map shrink windows, Nothing)
     where shrink (a, rect) = (a, shrinkWindow m rect)
+  pureMess l msg
+    | Just ToggleSpacing <- fromMessage msg = Just $ l { enabled = not (enabled l) }
+    | otherwise = Nothing
 
-shrinkScreen (Spacing g) (Rectangle x y w h) =
+shrinkScreen (Spacing g True) (Rectangle x y w h) =
   Rectangle x y (w - fromIntegral g) (h - fromIntegral g)
+shrinkScreen (Spacing _ False) r = r
 
-shrinkWindow (Spacing g) (Rectangle x y w h) =
+shrinkWindow (Spacing g True) (Rectangle x y w h) =
   Rectangle (x + fromIntegral g) (y + fromIntegral g) (w - fromIntegral g) (h - fromIntegral g)
+shrinkWindow (Spacing _ False) r = r
 
 
