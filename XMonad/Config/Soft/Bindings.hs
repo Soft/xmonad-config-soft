@@ -31,7 +31,7 @@ keyMap xc = mkKeymap xc
   , ("M-x", rofi internalPrompt)
   , ("M-c", withFocused centerWindow)
 
-  , ("M-t", sendMessage ToggleSpacing)
+  , ("M-n", sendMessage ToggleSpacing)
 
   -- Keybindings for BinarySpacePartition
   , ("C-M-l", sendMessage $ MoveSplit R)
@@ -59,5 +59,4 @@ launchers =
   , (xK_p, "pcmanfm", [],                     className =? "Pcmanfm")
   , (xK_t, "lxtask", [],                      className =? "Lxtask")
   , (xK_a, "urxvt", ["-e", "tmux", "attach"], title =? "tmux")]
-
 
